@@ -1,10 +1,5 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
-const _ = require('lodash');
-// const notifier = require('node-notifier');
-// const { CronJob } = require('cron');
-
-const ASSIGNMENT_REGEX = /.*\/mod\/assign.*/;
 
 (async () => {
     console.log(
