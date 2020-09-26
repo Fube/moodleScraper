@@ -22,7 +22,7 @@ Creeate a nameless file with the extension `.env`
 open the file and put in your student id as USER and your moodle password as PASS
 <br/>
 Example
-```js
+```env
 USER=123456
 PASS=8wnsd9
 ```
