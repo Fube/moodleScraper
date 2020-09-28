@@ -1,6 +1,7 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
-
+const readline = require('readline');
+const rl = readline.createInterface(process.stdin, process.stdout);
 (async () => {
     console.log(
         'STARTED LOADING\nIF YOU GET 2 EMPTY ARRAYS, RESTART THE PROGRAM\nIF IT TAKES LONGER THAN 5 MINUTES, RESTART THE PROGRAM'
@@ -29,7 +30,7 @@ const puppeteer = require('puppeteer');
         )
     );
 
-	console.log('\nGETTING ASSIGNMENTS AND EXAMS');
+    console.log('\nGETTING ASSIGNMENTS AND EXAMS');
     const allAssignments = [],
         allExams = [];
     for (const link of links) {
@@ -62,7 +63,10 @@ const puppeteer = require('puppeteer');
     console.log(upcomingLabs);
     console.log('\n\nUPCOMING EXAMS\n\n');
     console.log(upcomingExams);
-    //browser.close();
+    console.log('\n\nPRESS ENTER TO EXIT');
+
+    await browser.close();
+    rl.on('line', () => process.exit(0));
 })();
 
 async function getAssignments(page, assignmentLinks) {
