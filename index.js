@@ -2,12 +2,12 @@ require('dotenv').config();
 const puppeteer = require('puppeteer');
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
-(async () => {
+(async function () {
     console.log(
-        'STARTED LOADING\nIF YOU GET 2 EMPTY ARRAYS, RESTART THE PROGRAM\nIF IT TAKES LONGER THAN 5 MINUTES, RESTART THE PROGRAM'
+        'STARTED LOADING\nIF IT TAKES LONGER THAN 5 MINUTES, RESTART THE PROGRAM'
     );
     const browser = await puppeteer.launch({
-        headless: !!process.env.SHOW,
+        headless: process.env.SHOW == 'false',
         defaultViewport: null,
         executablePath: './chromium/chrome.exe',
     });
@@ -30,7 +30,6 @@ const rl = readline.createInterface(process.stdin, process.stdout);
         )
     );
 
-    console.log('\nGETTING ASSIGNMENTS AND EXAMS');
     const allAssignments = [],
         allExams = [];
     for (const link of links) {
@@ -51,6 +50,13 @@ const rl = readline.createInterface(process.stdin, process.stdout);
         allExams.push(...(await getExams(page, examLinks)));
         allAssignments.push(...(await getAssignments(page, assignmentLinks)));
     }
+
+    if (allAssignments.length === 0) {
+        await browser.close();
+        arguments.callee();
+        return;
+    }
+    console.log('\nGETTING ASSIGNMENTS AND EXAMS');
 
     const upcomingLabs = allAssignments.filter(
         ({ dueDate }) => new Date(dueDate) - new Date() > 0
