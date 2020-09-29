@@ -54,6 +54,7 @@ const rl = readline.createInterface(process.stdin, process.stdout);
     if (allAssignments.length === 0) {
         await browser.close();
         arguments.callee();
+        console.log('LOGIN FAILED! TRYING AGAIN');
         return;
     }
     console.log('\nGETTING ASSIGNMENTS AND EXAMS');
