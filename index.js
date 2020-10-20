@@ -52,9 +52,9 @@ const rl = readline.createInterface(process.stdin, process.stdout);
     }
 
     if (allAssignments.length === 0) {
+        console.log('LOGIN FAILED! TRYING AGAIN');
         await browser.close();
         arguments.callee();
-        console.log('LOGIN FAILED! TRYING AGAIN');
         return;
     }
     console.log('\nGETTING ASSIGNMENTS AND EXAMS');
@@ -135,6 +135,7 @@ async function getText(page, xpath, regex = /.*/g) {
     // const toRet = await page.evaluate(
     //     eval(`(element) => element.textContent,element`)
     // );
+    if (!element) return;
     const toRet = await element.getProperty('textContent');
 
     return toRet._remoteObject.value.match(regex)[0];
