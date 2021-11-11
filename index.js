@@ -2,6 +2,8 @@ require("dotenv").config();
 const puppeteer = require("puppeteer");
 const readline = require("readline");
 
+const pastDateFilter = ({ dueDate }) => new Date(dueDate) - new Date() > 0;
+
 const rl = readline.createInterface(process.stdin, process.stdout);
 (async function () {
     console.log(
@@ -53,10 +55,12 @@ const rl = readline.createInterface(process.stdin, process.stdout);
                 .map((x) => x.getAttribute("href"))
         );
 
-        const examLinks = await page.evaluate(
-            eval(
-                `() => [...document.querySelectorAll('a')].filter(({ href: h }) => /.*\\/mod\\/quiz.*/.test(h)).map(({ href: h }) => h)`
-            )
+        const examLinks = await page.$$eval("a[href]", (n) =>
+            n
+                .filter((x) =>
+                    x.getAttribute("href").toString().includes("mod/quiz")
+                )
+                .map((x) => x.getAttribute("href"))
         );
 
         allExams.push(...(await getExams(page, examLinks)));
@@ -71,12 +75,8 @@ const rl = readline.createInterface(process.stdin, process.stdout);
     }
     console.log("\nGETTING ASSIGNMENTS AND EXAMS");
 
-    const upcomingLabs = allAssignments.filter(
-        ({ dueDate }) => new Date(dueDate) - new Date() > 0
-    );
-    const upcomingExams = allExams.filter(
-        ({ dueDate }) => new Date(dueDate) - new Date() > 0
-    );
+    const upcomingLabs = allAssignments.filter(pastDateFilter);
+    const upcomingExams = allExams.filter(pastDateFilter);
 
     console.log("\n\nUPCOMING LABS\n\n");
     console.log(upcomingLabs);
@@ -144,9 +144,6 @@ async function getExams(page, examLinks) {
 }
 async function getText(page, xpath, regex = /.*/g) {
     const [element] = await page.$x(xpath);
-    // const toRet = await page.evaluate(
-    //     eval(`(element) => element.textContent,element`)
-    // );
     if (!element) return;
     const toRet = await element.getProperty("textContent");
 
