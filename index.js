@@ -1,27 +1,27 @@
-require('dotenv').config();
-const puppeteer = require('puppeteer');
-const readline = require('readline');
+require("dotenv").config();
+const puppeteer = require("puppeteer");
+const readline = require("readline");
+
 const rl = readline.createInterface(process.stdin, process.stdout);
 (async function () {
     console.log(
-        'STARTED LOADING\nIF IT TAKES LONGER THAN 5 MINUTES, RESTART THE PROGRAM'
+        "STARTED LOADING\nIF IT TAKES LONGER THAN 5 MINUTES, RESTART THE PROGRAM"
     );
     const browser = await puppeteer.launch({
-        headless: process.env.SHOW == 'false',
+        headless: process.env.SHOW == "false",
         defaultViewport: null,
-        executablePath: './chromium/chrome.exe',
     });
     const page = await browser.newPage();
     await page.goto(
-        'https://champlaincollege-st-lambert.moodle.decclic.qc.ca/login/index.php'
+        "https://champlaincollege-st-lambert.moodle.decclic.qc.ca/login/index.php"
     );
 
-    await page.type('#username', process.env.USER);
-    await page.type('#password', process.env.PASS);
+    await page.type("#username", process.env.USER);
+    await page.type("#password", process.env.PASS);
 
     await Promise.all([
-        page.click('#loginbtn'),
-        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        page.click("#loginbtn"),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
     const links = await page.evaluate(
@@ -52,12 +52,12 @@ const rl = readline.createInterface(process.stdin, process.stdout);
     }
 
     if (allAssignments.length === 0) {
-        console.log('LOGIN FAILED! TRYING AGAIN');
+        console.log("LOGIN FAILED! TRYING AGAIN");
         await browser.close();
         arguments.callee();
         return;
     }
-    console.log('\nGETTING ASSIGNMENTS AND EXAMS');
+    console.log("\nGETTING ASSIGNMENTS AND EXAMS");
 
     const upcomingLabs = allAssignments.filter(
         ({ dueDate }) => new Date(dueDate) - new Date() > 0
@@ -66,14 +66,14 @@ const rl = readline.createInterface(process.stdin, process.stdout);
         ({ dueDate }) => new Date(dueDate) - new Date() > 0
     );
 
-    console.log('\n\nUPCOMING LABS\n\n');
+    console.log("\n\nUPCOMING LABS\n\n");
     console.log(upcomingLabs);
-    console.log('\n\nUPCOMING EXAMS\n\n');
+    console.log("\n\nUPCOMING EXAMS\n\n");
     console.log(upcomingExams);
-    console.log('\n\nPRESS ENTER TO EXIT');
+    console.log("\n\nPRESS ENTER TO EXIT");
 
     await browser.close();
-    rl.on('line', () => process.exit(0));
+    rl.on("line", () => process.exit(0));
 })();
 
 async function getAssignments(page, assignmentLinks) {
@@ -109,11 +109,11 @@ async function getExams(page, examLinks) {
         const [courseName, examName, dueDate] = await Promise.all([
             getText(
                 page,
-                '/html/body/div[1]/div[3]/header/div/div/div/div[1]/div[1]/div/div/h1'
+                "/html/body/div[1]/div[3]/header/div/div/div/div[1]/div[1]/div/div/h1"
             ),
             getText(
                 page,
-                '/html/body/div[1]/div[3]/div/div/section/div[1]/div/div/h2'
+                "/html/body/div[1]/div[3]/div/div/section/div[1]/div/div/h2"
             ),
             page.evaluate(
                 eval(
@@ -136,7 +136,7 @@ async function getText(page, xpath, regex = /.*/g) {
     //     eval(`(element) => element.textContent,element`)
     // );
     if (!element) return;
-    const toRet = await element.getProperty('textContent');
+    const toRet = await element.getProperty("textContent");
 
     return toRet._remoteObject.value.match(regex)[0];
 }
