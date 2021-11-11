@@ -31,9 +31,11 @@ const rl = readline.createInterface(process.stdin, process.stdout);
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
-    const links = await page.evaluate(
-        eval(
-            `() => ([...document.querySelectorAll('.card-deck.dashboard-card-deck[data-region] > [data-course-id] > a')].map(({ href }) => href))`
+    const links = new Set(
+        await page.evaluate(
+            eval(
+                `() => ([...document.querySelectorAll('.card-deck.dashboard-card-deck[data-region] > [data-course-id] > a')].map(({ href }) => href))`
+            )
         )
     );
 
