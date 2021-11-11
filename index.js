@@ -113,6 +113,13 @@ async function getAssignments(page, assignmentLinks) {
 
     return toRet;
 }
+
+/**
+ *
+ * @param {import("puppeteer").Page} page
+ * @param {string[]} examLinks
+ * @returns
+ */
 async function getExams(page, examLinks) {
     const toRet = [];
 
@@ -127,10 +134,9 @@ async function getExams(page, examLinks) {
                 page,
                 "/html/body/div[1]/div[3]/div/div/section/div[1]/div/div/h2"
             ),
-            page.evaluate(
-                eval(
-                    `() =>document.querySelector('.box.py-3.quizinfo').innerHTML.match(/This quiz.*on (.*)</)[1]`
-                )
+            page.$eval(
+                ".box.py-3.quizinfo",
+                (n) => n.innerHTML.match(/This quiz.*on (.*)</)[1]
             ),
         ]);
         toRet.push({
