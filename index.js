@@ -33,13 +33,14 @@ const rl = readline.createInterface(process.stdin, process.stdout);
 
     const links = await page.evaluate(
         eval(
-            `() => ([...document.querySelectorAll('#page-container-3 > div > div > div > a')].map(({ href }) => href))`
+            `() => ([...document.querySelectorAll('.card-deck.dashboard-card-deck[data-region] > [data-course-id] > a')].map(({ href }) => href))`
         )
     );
 
     const allAssignments = [],
         allExams = [];
     for (const link of links) {
+        console.log(`Loading ${link}`);
         const page = await browser.newPage();
         await page.goto(link);
 
