@@ -9,8 +9,9 @@ const rl = readline.createInterface(process.stdin, process.stdout);
     console.log(
         "STARTED LOADING\nIF IT TAKES LONGER THAN 5 MINUTES, RESTART THE PROGRAM"
     );
+
     const browser = await puppeteer.launch({
-        headless: process.env.SHOW == "false",
+        headless: process.env.SHOW && process.env.SHOW == "false",
         defaultViewport: null,
     });
     const page = await browser.newPage();
