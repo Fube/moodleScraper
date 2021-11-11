@@ -16,8 +16,15 @@ const rl = readline.createInterface(process.stdin, process.stdout);
         "https://champlaincollege-st-lambert.moodle.decclic.qc.ca/login/index.php"
     );
 
-    await page.type("#username", process.env.USER);
-    await page.type("#password", process.env.PASS);
+    await Promise.all([
+        page.waitForNavigation(),
+        page.waitForSelector("#username"),
+        page.waitForSelector("#password"),
+        page.waitForSelector("#loginbtn"),
+    ]);
+
+    await page.type("#username", process.env.MOODLE_USERNAME);
+    await page.type("#password", process.env.MOODLE_PASSWORD);
 
     await Promise.all([
         page.click("#loginbtn"),
