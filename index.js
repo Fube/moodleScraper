@@ -32,10 +32,9 @@ const rl = readline.createInterface(process.stdin, process.stdout);
     ]);
 
     const links = new Set(
-        await page.evaluate(
-            eval(
-                `() => ([...document.querySelectorAll('.card-deck.dashboard-card-deck[data-region] > [data-course-id] > a')].map(({ href }) => href))`
-            )
+        await page.$$eval(
+            `.card-deck.dashboard-card-deck[data-region] > [data-course-id] > a`,
+            (n) => n.map((x) => x.getAttribute("href"))
         )
     );
 
@@ -46,11 +45,14 @@ const rl = readline.createInterface(process.stdin, process.stdout);
         const page = await browser.newPage();
         await page.goto(link);
 
-        const assignmentLinks = await page.evaluate(
-            eval(
-                `() => [...document.querySelectorAll('a')].filter(({ href: h }) => /.*\\/mod\\/assign.*/.test(h)).map(({ href: h }) => h)`
-            )
+        const assignmentLinks = await page.$$eval("a[href]", (n) =>
+            n
+                .filter((x) =>
+                    x.getAttribute("href").toString().includes("mod/assign")
+                )
+                .map((x) => x.getAttribute("href"))
         );
+
         const examLinks = await page.evaluate(
             eval(
                 `() => [...document.querySelectorAll('a')].filter(({ href: h }) => /.*\\/mod\\/quiz.*/.test(h)).map(({ href: h }) => h)`
